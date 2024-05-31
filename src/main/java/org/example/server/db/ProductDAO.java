@@ -83,9 +83,33 @@ public class ProductDAO extends DAO {
         return id;
     }
     public void removeById(long id) throws SQLException {
-        PreparedStatement ps = connection.prepareStatement("DELETE FROM products WHERE id = ?");
-        ps.setLong(1, id);
-        ps.executeUpdate();
+        String deleteProductSql = "DELETE FROM products WHERE id = ?";
+        String deleteCoordinatesSql = "DELETE FROM Coordinates  WHERE id = (SELECT coordinates_id FROM Products WHERE id = ?)";
+        String deleteOrganizationSql = "DELETE FROM Organizations  WHERE id = (SELECT manufacturer_id FROM Products WHERE id = ?)";
+        String deleteAddressSql = "DELETE FROM Addresses WHERE id = (SELECT address_id FROM Organizations WHERE id = (SELECT manufacturer_id FROM Products WHERE id = ?))";
+        connection.setAutoCommit(false);
+        try (PreparedStatement psProduct = connection.prepareStatement(deleteProductSql);
+             PreparedStatement psCoordinates = connection.prepareStatement(deleteCoordinatesSql);
+             PreparedStatement psOrganization = connection.prepareStatement(deleteOrganizationSql);
+             PreparedStatement psAddress = connection.prepareStatement(deleteAddressSql)) {
+
+            psCoordinates.setLong(1, id);
+            psCoordinates.executeUpdate();
+
+            psAddress.setLong(1, id);
+            psAddress.executeUpdate();
+
+            psOrganization.setLong(1, id);
+            psOrganization.executeUpdate();
+
+            psProduct.setLong(1, id);
+            psProduct.executeUpdate();
+
+            connection.commit();
+        } catch (SQLException e) {
+            connection.rollback();
+            throw e;
+        }
 
     }
     public void updateProduct(long id, ProductDTO productDTO) throws SQLException{

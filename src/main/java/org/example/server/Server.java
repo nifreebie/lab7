@@ -33,7 +33,7 @@ public class Server {
 
     }
     private static void initCollection(){
-        Database db = new PostgresDatabase("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+        Database db = new PostgresDatabase("jdbc:postgresql://localhost:5432/lab7db", "nifreebie", "1234");
         try {
             DAO productDAO = db.createProductsConnection();
             DAO userDAO = db.createUserConnection();

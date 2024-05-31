@@ -7,13 +7,20 @@ import org.example.contract.utils.StatusCode;
 import org.example.server.collection.CollectionManager;
 import org.example.server.utils.ProductComparator;
 
+import java.sql.SQLException;
+
 public class AddCommandHandler extends CommandHandler<AddCommand> {
     public Response handle(AddCommand command) {
         CollectionManager collectionManager = this.app.getCollectionManager();
-        collectionManager.add(command.getProductDTO(),command.getLogin());
-        ProductComparator productComparator = new ProductComparator();
-        collectionManager.sort(productComparator);
-        collectionManager.save();
-        return new ResponseWithMessage(StatusCode._200_SUCCESS_, "продукт добавлен");
+        try {
+            collectionManager.add(command.getProductDTO(),command.getUser().getLogin());
+            ProductComparator productComparator = new ProductComparator();
+            collectionManager.sort(productComparator);
+            collectionManager.save();
+            return new ResponseWithMessage(StatusCode._200_SUCCESS_, "продукт добавлен");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

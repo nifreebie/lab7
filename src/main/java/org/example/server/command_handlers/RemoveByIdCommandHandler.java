@@ -21,7 +21,7 @@ public class RemoveByIdCommandHandler extends CommandHandler<RemoveByIdCommand> 
             if (!collectionManager.isIdExists(findId)) return new ResponseWithMessage(StatusCode._400_CLIENT_ERROR, "такого id не существует");
             else{
                 try {
-                    collectionManager.removeById(findId, command.getLogin());
+                    collectionManager.removeById(findId, command.getUser().getLogin());
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }catch (UserIsNotOwnerException e){

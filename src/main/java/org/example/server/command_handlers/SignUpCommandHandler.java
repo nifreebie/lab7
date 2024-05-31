@@ -13,10 +13,10 @@ public class SignUpCommandHandler extends CommandHandler<SignUpCommand> {
     @Override
     public Response handle(SignUpCommand command) {
         try {
-            ServerAppContainer.getInstance().getUserManager().signUp(command.getLogin(), command.getPassword());
-            return new AuthorizationResponse(StatusCode._200_SUCCESS_, "", command.getLogin(), command.getPassword());
+            ServerAppContainer.getInstance().getUserManager().signUp(command.getUser().getLogin(), command.getUser().getPassword());
+            return new AuthorizationResponse(StatusCode._200_SUCCESS_, "", command.getUser());
         } catch (SQLException e) {
-            return new AuthorizationResponse(StatusCode._400_CLIENT_ERROR, "пользователь с таким логином уже есть", null, null);
+            return new AuthorizationResponse(StatusCode._400_CLIENT_ERROR, "пользователь с таким логином уже есть", null);
         }
     }
 }

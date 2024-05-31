@@ -82,7 +82,6 @@ public void openConnection() throws IOException {
             if (key.isAcceptable()) {
                 accept(key);
             } else if (key.isReadable()) {
-                //read(key);
                 new Thread(() -> {
                     try {
                         read(key);
@@ -122,28 +121,6 @@ public void openConnection() throws IOException {
             return;
         }
         localBuffer.flip();
-
-//        new Thread(() -> {
-//            int bytesRead;
-//            try {
-//                try {
-//                    bytesRead = socketChannel.read(localBuffer);
-//                } catch (IOException e) {
-//                    key.cancel();
-//                    socketChannel.close();
-//                    return;
-//                }
-//
-//                if (bytesRead == -1) {
-//                    key.cancel();
-//                    return;
-//                }
-//                localBuffer.flip();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-
 
         requestProcessPool.submit(() -> {
             readWriteLock.readLock().lock();

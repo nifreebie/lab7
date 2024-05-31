@@ -2,15 +2,15 @@ package org.example.server;
 
 import org.example.contract.model.Product;
 import org.example.server.collection.CollectionManager;
-import org.example.server.db.Database;
-import org.example.server.db.DatabaseConnection;
-import org.example.server.db.PostgresDatabase;
+import org.example.server.db.*;
 import org.example.server.utils.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+
 
 public class Server {
     public static void main(String[] args) throws IOException {
@@ -35,12 +35,16 @@ public class Server {
     private static void initCollection(){
         Database db = new PostgresDatabase("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
         try {
-            DatabaseConnection connection = db.createConnection();
+            DAO productDAO = db.createProductsConnection();
+            DAO userDAO = db.createUserConnection();
+            DAO productUserReferenceDAO = db.createProductUserReferenceConnection();
             Set<Product> productCollection = new LinkedHashSet<>();
             CollectionManager collectionManager = new CollectionManager(productCollection);
-            collectionManager.setConnection(connection);
+            collectionManager.setProductDAO((ProductDAO) productDAO);
+            collectionManager.setUserDAO((UserDAO) userDAO);
+            collectionManager.setProductUserReferenceDAO((ProductUserReferenceDAO) productUserReferenceDAO);
             UserManager userManager = new UserManager();
-            userManager.setConnection(connection);
+            userManager.setUserDAO((UserDAO) userDAO);
             ServerAppContainer.getInstance().setCollectionManager(collectionManager);
             ServerAppContainer.getInstance().getCollectionManager().loadCollectionFromDB();
             ServerAppContainer.getInstance().setUserManager(userManager);

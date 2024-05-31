@@ -13,7 +13,17 @@ public class PostgresDatabase implements Database {
         this.password = password;
     }
     @Override
-    public DatabaseConnection createConnection() throws SQLException {
-        return new PostgresConnection(url, login, password);
+    public DAO createProductsConnection() throws SQLException {
+        return new ProductDAO(url, login, password);
+    }
+
+    @Override
+    public DAO createUserConnection() throws SQLException {
+        return new UserDAO(url,login, password);
+    }
+
+    @Override
+    public DAO createProductUserReferenceConnection() throws SQLException {
+        return new ProductUserReferenceDAO(url,login, password);
     }
 }

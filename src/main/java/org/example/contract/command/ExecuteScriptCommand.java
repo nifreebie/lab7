@@ -2,6 +2,7 @@ package org.example.contract.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.example.contract.model.User;
 
 import java.util.List;
 
@@ -9,6 +10,5 @@ import java.util.List;
 @Getter
 public class ExecuteScriptCommand implements Command{
     private List<Command> commandList;
-    private String login;
-    private String password;
+    private User user;
 }

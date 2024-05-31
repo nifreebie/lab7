@@ -5,7 +5,6 @@ import org.example.contract.responses.Response;
 import org.example.contract.responses.ResponseWithMessage;
 import org.example.contract.utils.StatusCode;
 import org.example.server.collection.CollectionManager;
-import org.example.server.utils.ServerAppContainer;
 
 import java.sql.SQLException;
 
@@ -14,7 +13,7 @@ public class ClearCommandHandler extends CommandHandler<ClearCommand>{
     public Response handle(ClearCommand command) {
         CollectionManager collectionManager = this.app.getCollectionManager();
         try {
-            collectionManager.clear(command.getLogin());
+            collectionManager.clear(command.getUser().getLogin());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

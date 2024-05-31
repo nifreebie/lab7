@@ -16,14 +16,14 @@ public class SignInCommandHandler extends CommandHandler<SignInCommand> {
     @Override
     public Response handle(SignInCommand command) {
         try {
-            ServerAppContainer.getInstance().getUserManager().signIn(command.getLogin(), command.getPassword());
-            return new AuthorizationResponse(StatusCode._200_SUCCESS_, "", command.getLogin(), command.getPassword());
+            ServerAppContainer.getInstance().getUserManager().signIn(command.getUser().getLogin(), command.getUser().getPassword());
+            return new AuthorizationResponse(StatusCode._200_SUCCESS_, "", command.getUser());
         } catch (SQLException e) {
             throw new RuntimeException();
         }catch(WrongPasswordException e){
-            return new AuthorizationResponse(StatusCode._400_CLIENT_ERROR, "неверный пароль", null, null);
+            return new AuthorizationResponse(StatusCode._400_CLIENT_ERROR, "неверный пароль", null);
         }catch(UserNotFoundException e){
-            return new AuthorizationResponse(StatusCode._400_CLIENT_ERROR, "пользователя с таким логином не существует", null, null);
+            return new AuthorizationResponse(StatusCode._400_CLIENT_ERROR, "пользователя с таким логином не существует", null);
         }
     }
 }

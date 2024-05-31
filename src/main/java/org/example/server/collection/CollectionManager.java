@@ -5,8 +5,9 @@ import lombok.Setter;
 import org.example.contract.exceptions.UserIsNotOwnerException;
 import org.example.contract.model.Product;
 import org.example.contract.model.ProductDTO;
-import org.example.contract.model.User;
-import org.example.server.db.DatabaseConnection;
+import org.example.server.db.ProductDAO;
+import org.example.server.db.ProductUserReferenceDAO;
+import org.example.server.db.UserDAO;
 import org.example.server.utils.ProductComparator;
 
 import java.sql.SQLException;
@@ -16,49 +17,41 @@ import java.util.*;
 public class CollectionManager {
     private Set<Product> products;
     private long lastId = 0;
-    private DatabaseConnection connection;
+    private ProductDAO productDAO;
+    private UserDAO userDAO;
+    private ProductUserReferenceDAO productUserReferenceDAO;
 
     public CollectionManager(Set<Product> productCollection) {
         this.products = productCollection;
     }
 
-    public void add(ProductDTO productDTO, String ownerLogin) {
-        try{
-            connection.addProduct(productDTO, ownerLogin);
-            loadCollectionFromDB();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public void add(ProductDTO productDTO, String ownerLogin) throws SQLException {
+        long id = productDAO.addProduct(productDTO,ownerLogin);
+        productUserReferenceDAO.addRelationship(id, ownerLogin);
+        loadCollectionFromDB();
     }
     public void loadCollectionFromDB() throws SQLException {
-        this.products = this.connection.getAllProducts();
+        this.products = this.productDAO.getAllProducts();
     }
 
-    public void removeById(long id, String login ) throws SQLException, UserIsNotOwnerException {
-        this.connection.removeById(id, login );
+    public void removeById(long id, String login) throws SQLException, UserIsNotOwnerException {
+        if (!productUserReferenceDAO.isOwner(id, login)) {
+            throw new UserIsNotOwnerException();
+        }
+        productDAO.removeById(id);
         loadCollectionFromDB();
     }
 
-    public void updateById(long id, ProductDTO productDTO, String ownerLogin) throws SQLException {
-        this.connection.updateProduct(id, productDTO, ownerLogin);
+    public void updateById(long id, ProductDTO productDTO, String login) throws SQLException {
+        if (!productUserReferenceDAO.isOwner(id, login)) {
+            throw new UserIsNotOwnerException();
+        }
+        this.productDAO.updateProduct(id, productDTO);
         loadCollectionFromDB();
     }
 
     public long generateId() {
         return ++lastId;
-    }
-    public long getMaxId(){
-        long maxId = -1;
-        if(products.isEmpty()){
-            return lastId;
-        }
-        else{
-            for(Product p: products){
-                if(p.getId() > maxId) maxId = p.getId();
-            }
-            return maxId;
-        }
-
     }
 
     public int getSize() {
@@ -122,7 +115,9 @@ public class CollectionManager {
     }
 
     public void clear(String owner) throws SQLException {
-        this.connection.clearCollectionForUser(owner);
+        for(long id: productUserReferenceDAO.getUserProducts(owner)){
+            productDAO.removeById(id);
+        }
         loadCollectionFromDB();
     }
 

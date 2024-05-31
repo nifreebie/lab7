@@ -21,7 +21,7 @@ public class UpdateCommandHandler extends CommandHandler<UpdateCommand> {
                 return new ResponseWithMessage(StatusCode._400_CLIENT_ERROR,"такого id не существует!" );
             }else{
                 try {
-                    collectionManager.updateById(updateId, command.getProductDTO(), command.getLogin());
+                    collectionManager.updateById(updateId, command.getProductDTO(), command.getUser().getLogin());
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }catch(UserIsNotOwnerException e){

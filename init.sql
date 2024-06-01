@@ -15,7 +15,7 @@ CREATE TABLE Organizations (
                                employeesCount BIGINT CHECK (employeesCount > 0),
                                type VARCHAR(50) NOT NULL CHECK (type IN ('GOVERNMENT', 'PRIVATE_LIMITED_COMPANY', 'OPEN_JOINT_STOCK_COMPANY')),
                                address_id INTEGER,
-                               FOREIGN KEY (address_id) REFERENCES Addresses(id)
+                               FOREIGN KEY (address_id) REFERENCES Addresses(id) ON DELETE  CASCADE
 );
 
 CREATE TABLE Products (
@@ -27,8 +27,8 @@ CREATE TABLE Products (
                           partNumber VARCHAR(74) NOT NULL CHECK (partNumber <> ''),
                           unitOfMeasure VARCHAR(255) CHECK (unitOfMeasure IN ('KILOGRAMS', 'PCS', 'MILLIGRAMS')),
                           manufacturer_id INTEGER NOT NULL,
-                          FOREIGN KEY (coordinates_id) REFERENCES Coordinates(id),
-                          FOREIGN KEY (manufacturer_id) REFERENCES Organizations(id)
+                          FOREIGN KEY (coordinates_id) REFERENCES Coordinates(id) ON DELETE CASCADE,
+                          FOREIGN KEY (manufacturer_id) REFERENCES Organizations(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Users (

@@ -1,0 +1,14 @@
+июн. 01, 2024 11:27:49 AM org.example.server.utils.Logger log
+INFO: Подключено: /127.0.0.1:54072
+июн. 01, 2024 11:27:57 AM org.example.server.utils.Logger log
+INFO: Получено: class org.example.contract.command.SignInCommand
+июн. 01, 2024 11:27:57 AM org.example.server.utils.Logger log
+INFO: Отправлено: org.example.contract.responses.AuthorizationResponse@3bc2a1b
+июн. 01, 2024 11:27:59 AM org.example.server.utils.Logger log
+INFO: Получено: class org.example.contract.command.ShowCommand
+июн. 01, 2024 11:27:59 AM org.example.server.utils.Logger log
+INFO: Отправлено: org.example.contract.responses.ResponseWithMessage@3a68034f
+июн. 01, 2024 11:28:04 AM org.example.server.utils.Logger log
+INFO: Получено: class org.example.contract.command.RemoveByIdCommand
+июн. 01, 2024 11:28:04 AM org.example.server.utils.Logger log
+INFO: Отправлено: org.example.contract.responses.ResponseWithMessage@3dae3431

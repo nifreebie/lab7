@@ -1,6 +1,5 @@
 package org.example.server.db;
 
-import org.example.contract.exceptions.UserIsNotOwnerException;
 import org.example.contract.model.*;
 
 import java.sql.Date;
@@ -84,32 +83,17 @@ public class ProductDAO extends DAO {
     }
     public void removeById(long id) throws SQLException {
         String deleteProductSql = "DELETE FROM products WHERE id = ?";
-        String deleteCoordinatesSql = "DELETE FROM Coordinates  WHERE id = (SELECT coordinates_id FROM Products WHERE id = ?)";
-        String deleteOrganizationSql = "DELETE FROM Organizations  WHERE id = (SELECT manufacturer_id FROM Products WHERE id = ?)";
-        String deleteAddressSql = "DELETE FROM Addresses WHERE id = (SELECT address_id FROM Organizations WHERE id = (SELECT manufacturer_id FROM Products WHERE id = ?))";
         connection.setAutoCommit(false);
-        try (PreparedStatement psProduct = connection.prepareStatement(deleteProductSql);
-             PreparedStatement psCoordinates = connection.prepareStatement(deleteCoordinatesSql);
-             PreparedStatement psOrganization = connection.prepareStatement(deleteOrganizationSql);
-             PreparedStatement psAddress = connection.prepareStatement(deleteAddressSql)) {
-
-            psCoordinates.setLong(1, id);
-            psCoordinates.executeUpdate();
-
-            psAddress.setLong(1, id);
-            psAddress.executeUpdate();
-
-            psOrganization.setLong(1, id);
-            psOrganization.executeUpdate();
-
+        try (PreparedStatement psProduct = this.connection.prepareStatement(deleteProductSql)) {
             psProduct.setLong(1, id);
             psProduct.executeUpdate();
-
             connection.commit();
         } catch (SQLException e) {
             connection.rollback();
             throw e;
         }
+
+
 
     }
     public void updateProduct(long id, ProductDTO productDTO) throws SQLException{
@@ -118,10 +102,10 @@ public class ProductDAO extends DAO {
         String updateOrganizationSql = "UPDATE Organizations SET name = ?, employeesCount = ?, type = ? WHERE id = (SELECT manufacturer_id FROM Products WHERE id = ?)";
         String updateAddressSql = "UPDATE Addresses SET street = ? WHERE id = (SELECT address_id FROM Organizations WHERE id = (SELECT manufacturer_id FROM Products WHERE id = ?))";
         connection.setAutoCommit(false);
-        try (PreparedStatement psProduct = connection.prepareStatement(updateProductSql);
-             PreparedStatement psCoordinates = connection.prepareStatement(updateCoordinatesSql);
-             PreparedStatement psOrganization = connection.prepareStatement(updateOrganizationSql);
-             PreparedStatement psAddress = connection.prepareStatement(updateAddressSql)) {
+        try (PreparedStatement psProduct = this.connection.prepareStatement(updateProductSql);
+             PreparedStatement psCoordinates = this.connection.prepareStatement(updateCoordinatesSql);
+             PreparedStatement psOrganization = this.connection.prepareStatement(updateOrganizationSql);
+             PreparedStatement psAddress = this.connection.prepareStatement(updateAddressSql)) {
 
             psProduct.setString(1, productDTO.getName());
             psProduct.setInt(2, productDTO.getPrice());

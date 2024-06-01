@@ -38,6 +38,7 @@ public class CollectionManager {
         if (!productUserReferenceDAO.isOwner(id, login)) {
             throw new UserIsNotOwnerException();
         }
+        System.out.println("1");
         productDAO.removeById(id);
         loadCollectionFromDB();
     }
